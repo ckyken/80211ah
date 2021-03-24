@@ -74,7 +74,7 @@ double TwoRayGround_CS_RX_Threshold_Calculator(double TX_Power_dBm, double TX_An
 void Lab3_Exp(int Performance_Type, int Node_HorizonSpacing_meter)
 {
   //Create node ==> 2 nodes 1 pair
-  int Num_WiFiSTA_Node = 4;
+  int Num_WiFiSTA_Node = 2;
   NodeContainer WiFiSTA_Node;
   WiFiSTA_Node.Create(Num_WiFiSTA_Node);
 
@@ -97,7 +97,7 @@ void Lab3_Exp(int Performance_Type, int Node_HorizonSpacing_meter)
   //set Type of 802.11
   WifiHelper WiFi = WifiHelper::Default();
 
-  std::string WiFi_Standard_Protocol = "802.11g";
+  std::string WiFi_Standard_Protocol = "802.11ah";
   if (WiFi_Standard_Protocol == "802.11a")
     WiFi.SetStandard(WIFI_PHY_STANDARD_80211a);
   else if (WiFi_Standard_Protocol == "802.11b")
@@ -114,7 +114,7 @@ void Lab3_Exp(int Performance_Type, int Node_HorizonSpacing_meter)
   //WiFi.SetRemoteStationManager("ns3::IdealWifiManager");
   //std::string phyMode("OfdmRate18Mbps");
   //std::string phyMode("OfdmRate1_8MbpsBW1MHz");
-  std::string phyMode("DsssRate1Mbps");
+  std::string phyMode("OfdmRate300KbpsBW1MHz");
   WiFi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
                                "DataMode", StringValue(phyMode),
                                "ControlMode", StringValue(phyMode));

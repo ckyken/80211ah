@@ -89,7 +89,7 @@ void Lab3_Exp(int Performance_Type, int Node1and2_Distance_meter)
 
 	// ======== [ 2 : Set Nodes Positions ] ======== //
 	int Start_XPos_meter, Start_YPos_meter, Start_ZPos_meter;
-	int Node_HorizonSpacing_meter = 50;
+	int Node_HorizonSpacing_meter = 500;
 	MobilityHelper WiFiSTA_Mobility;
 	// --------------------------------------------- //
 	Start_XPos_meter = Start_YPos_meter = Start_ZPos_meter = 0;
@@ -134,7 +134,7 @@ void Lab3_Exp(int Performance_Type, int Node1and2_Distance_meter)
 															 "DataMode", StringValue(phyMode),
 															 "ControlMode", StringValue(phyMode));
 
-	std::string RtsCts_Activate_LowerBound = "1000000";
+	std::string RtsCts_Activate_LowerBound = "1";
 	Config::SetDefault("ns3::WifiRemoteStationManager::RtsCtsThreshold", StringValue(RtsCts_Activate_LowerBound));
 	// -------------------------------------------------------------------------- //
 	double CenterFrequency_Hz = 5.0e+09, SystemLoss = 1, MinDistance_meter = 0, NodeHeight_meter = 1.5;

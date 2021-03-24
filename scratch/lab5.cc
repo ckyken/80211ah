@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 {
   //std::string phyMode("DsssRate1Mbps");
   std::string phyMode("OfdmRate300KbpsBW1MHz");
-  double distance = 500;     // m
+  double distance = 5;     // m
   uint32_t numNodes = 25;    // by default, 5x5
   double interval = 0.01;    // seconds  Default = 0.001
   uint32_t packetSize = 500; // bytes  Default = 600
@@ -267,7 +267,7 @@ int main(int argc, char *argv[])
 */
     }
   }
-  monitor->SerializeToXmlFile("lab-5.flowmon", true, true);
+  //monitor->SerializeToXmlFile("lab-5.flowmon", true, true);
 
   Simulator::Destroy();
 
