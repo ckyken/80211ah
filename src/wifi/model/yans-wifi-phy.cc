@@ -87,13 +87,13 @@ YansWifiPhy::GetTypeId (void)
                    MakeUintegerChecker<uint32_t> ())
     .AddAttribute ("TxPowerEnd",
                    "Maximum available transmission level (dbm).",
-                   DoubleValue (16.0206),
+                   DoubleValue (23.979400086720375),
                    MakeDoubleAccessor (&YansWifiPhy::SetTxPowerEnd,
                                        &YansWifiPhy::GetTxPowerEnd),
                    MakeDoubleChecker<double> ())
     .AddAttribute ("TxPowerStart",
                    "Minimum available transmission level (dbm).",
-                   DoubleValue (16.0206),
+                   DoubleValue (23.979400086720375),
                    MakeDoubleAccessor (&YansWifiPhy::SetTxPowerStart,
                                        &YansWifiPhy::GetTxPowerStart),
                    MakeDoubleChecker<double> ())

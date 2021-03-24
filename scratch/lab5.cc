@@ -61,12 +61,13 @@ using namespace ns3;
 
 int main(int argc, char *argv[])
 {
+  //std::string phyMode("DsssRate1Mbps");
   std::string phyMode("OfdmRate300KbpsBW1MHz");
   double distance = 500;     // m
   uint32_t numNodes = 25;    // by default, 5x5
   double interval = 0.01;    // seconds  Default = 0.001
   uint32_t packetSize = 500; // bytes  Default = 600
-  uint32_t numPackets = 1000;
+  uint32_t numPackets = 10000;
   std::string rtslimit = "1000000"; //Default = 1000000 1500
   CommandLine cmd;
 
@@ -126,24 +127,26 @@ int main(int argc, char *argv[])
   //////////////////////////////////////////////////////////////////////////--------------------
 
   // Add a non-QoS upper mac, and disable rate control
+  //NqosWifiMacHelper wifiMac = NqosWifiMacHelper::Default();
   S1gWifiMacHelper wifiMac = S1gWifiMacHelper();
   wifi.SetStandard(WIFI_PHY_STANDARD_80211ah);
+  //wifiMac.SetType("ns3::AdhocWifiMac", "QosSupported", BooleanValue(true), "HtSupported", BooleanValue(true));
   wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
                                "DataMode", StringValue(phyMode),
                                "ControlMode", StringValue(phyMode));
+  wifiMac.SetType("ns3::AdhocWifiMac", "QosSupported", BooleanValue(true));
 
-  ////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
   S1gWifiMacHelper wifiMac_2 = S1gWifiMacHelper::Default();
   S1gWifiMacHelper wifiMac_3 = S1gWifiMacHelper::Default();
 
-  wifiMac_2.SetType("ns3::AdhocWifiMac");
-  wifiMac_3.SetType("ns3::AdhocWifiMac");
+  wifiMac_2.SetType("ns3::AdhocWifiMac", "QosSupported", BooleanValue(true));
+  wifiMac_3.SetType("ns3::AdhocWifiMac", "QosSupported", BooleanValue(true));
 
   NetDeviceContainer devices_2 = wifi.Install(wifiPhy_2, wifiMac_2, c);
   NetDeviceContainer devices_3 = wifi.Install(wifiPhy_3, wifiMac_3, c);
   //////////////////////////////////////////////////////////////////////////////////--------------------
-  // Set it to adhoc mode
-  wifiMac.SetType("ns3::AdhocWifiMac");
+
   NetDeviceContainer devices = wifi.Install(wifiPhy, wifiMac, c);
 
   MobilityHelper mobility;
@@ -163,7 +166,7 @@ int main(int argc, char *argv[])
   DsdvHelper dsdv;
 
   Ipv4ListRoutingHelper list;
-  list.Add(aodv, 10);
+  list.Add( dsdv, 10);
 
   InternetStackHelper internet;
   internet.SetRoutingHelper(list); // has effect on the next Install ()
@@ -175,7 +178,9 @@ int main(int argc, char *argv[])
   Ipv4InterfaceContainer ifcont = ipv4.Assign(devices);
 
   ////////////////////////////////////////
+  ipv4.SetBase("10.1.2.0", "255.255.255.0");
   Ipv4InterfaceContainer ifcont_2 = ipv4.Assign(devices_2);
+  ipv4.SetBase("10.1.3.0", "255.255.255.0");
   Ipv4InterfaceContainer ifcont_3 = ipv4.Assign(devices_3);
   ////////////////////////////////////////-----------------------
 
@@ -200,8 +205,9 @@ int main(int argc, char *argv[])
   app1->SetStartTime(Seconds(31.));
   app1->SetStopTime(Seconds(100.));
 
-  // UDP connection from N20 to N4
   /**
+  // UDP connection from N20 to N4
+
   Address sinkAddress2(InetSocketAddress(ifcont.GetAddress(4), sinkPort)); // interface of n4
   PacketSinkHelper packetSinkHelper2("ns3::UdpSocketFactory", InetSocketAddress(Ipv4Address::GetAny(), sinkPort));
   ApplicationContainer sinkApps2 = packetSinkHelper2.Install(c.Get(4)); //n2 as sink
@@ -221,7 +227,7 @@ int main(int argc, char *argv[])
   FlowMonitorHelper flowmon;
   Ptr<FlowMonitor> monitor = flowmon.InstallAll();
 
-  //wifiPhy.EnablePcap("lab-5-solved", devices);
+  //wifiPhy.EnablePcap ("lab-5-solved", devices);
 
   Simulator::Stop(Seconds(100.0));
   Simulator::Run();
@@ -234,8 +240,8 @@ int main(int argc, char *argv[])
   for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator iter = stats.begin(); iter != stats.end(); ++iter)
   {
     Ipv4FlowClassifier::FiveTuple t = classifier->FindFlow(iter->first);
-
-    if ((t.sourceAddress == Ipv4Address("10.1.1.1") && t.destinationAddress == Ipv4Address("10.1.1.25")) || (t.sourceAddress == Ipv4Address("10.1.1.21") && t.destinationAddress == Ipv4Address("10.1.1.5")))
+    if ((t.sourceAddress == Ipv4Address("10.1.1.1") && t.destinationAddress == Ipv4Address("10.1.1.25")))
+    //if ((t.sourceAddress == Ipv4Address("10.1.1.1") && t.destinationAddress == Ipv4Address("10.1.1.25")) || (t.sourceAddress == Ipv4Address("10.1.1.21") && t.destinationAddress == Ipv4Address("10.1.1.5")))
 
     /*
       if (t.sourceAddress == Ipv4Address("10.1.1.1") && t.destinationAddress == Ipv4Address("10.1.1.25"))
@@ -245,6 +251,7 @@ int main(int argc, char *argv[])
       NS_LOG_UNCOND("Flow ID: " << iter->first << " Src Addr " << t.sourceAddress << " Dst Addr " << t.destinationAddress);
       NS_LOG_UNCOND("Tx Packets = " << iter->second.txPackets);
       NS_LOG_UNCOND("Rx Packets = " << iter->second.rxPackets);
+       NS_LOG_UNCOND("Lost Packets = " << iter->second.lostPackets);
       NS_LOG_UNCOND("Avg PDR: " << (double)iter->second.rxPackets / (double)iter->second.txPackets);
       NS_LOG_UNCOND("Throughput: " << iter->second.rxBytes * 8.0 / (iter->second.timeLastRxPacket.GetSeconds() - iter->second.timeFirstTxPacket.GetSeconds()) / 1024 << " Kbps");
       NS_LOG_UNCOND("Avg Delay: " << iter->second.delaySum.GetSeconds() / iter->second.rxPackets << " Seconds");

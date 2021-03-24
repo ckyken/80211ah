@@ -97,7 +97,7 @@ void Lab3_Exp(int Performance_Type, int Node_HorizonSpacing_meter)
   //set Type of 802.11
   WifiHelper WiFi = WifiHelper::Default();
 
-  std::string WiFi_Standard_Protocol = "802.11ah";
+  std::string WiFi_Standard_Protocol = "802.11g";
   if (WiFi_Standard_Protocol == "802.11a")
     WiFi.SetStandard(WIFI_PHY_STANDARD_80211a);
   else if (WiFi_Standard_Protocol == "802.11b")
@@ -113,7 +113,8 @@ void Lab3_Exp(int Performance_Type, int Node_HorizonSpacing_meter)
 
   //WiFi.SetRemoteStationManager("ns3::IdealWifiManager");
   //std::string phyMode("OfdmRate18Mbps");
-  std::string phyMode("OfdmRate1_8MbpsBW1MHz");
+  //std::string phyMode("OfdmRate1_8MbpsBW1MHz");
+  std::string phyMode("DsssRate1Mbps");
   WiFi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
                                "DataMode", StringValue(phyMode),
                                "ControlMode", StringValue(phyMode));
